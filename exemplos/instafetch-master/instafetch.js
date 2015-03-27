@@ -100,6 +100,9 @@ Instafetch.prototype.fetch = function(params) {
             tmpArr: filteredArr
           });
         }
+      },
+      error: function(){
+        console.log("error no request");
       }
   });
 }
