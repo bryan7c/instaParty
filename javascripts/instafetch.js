@@ -59,7 +59,7 @@ Instafetch.prototype.fetch = function(params) {
           format: "json"
       },
       success: function(response) {
-        console.log(response);
+        console.log(response,"retorno da bagaca");
         /* FILTER */
         // If only one parameter is specified, no need to filter
         if(params.hasOwnProperty('user') != params.hasOwnProperty('tag')) {

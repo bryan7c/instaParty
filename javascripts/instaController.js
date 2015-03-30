@@ -1,9 +1,3 @@
-// Bare bone callback
-var logResults = function(response, params) {
-  console.log(response);
-  console.log(params);
-};
-
 // Will display the results in square divs
 var displayInstaBlocks = function(response, params) {
   console.log(response);
