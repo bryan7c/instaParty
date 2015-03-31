@@ -103,12 +103,18 @@ angular.module("myApp", [])
             }
           }
           if($(".royalSlider").data('royalSlider') == undefined){
-            $interval(function() {
+            var setS = $interval(function() {
+              console.log("rodou");
               $scope.setSlider();
+              $interval.cancel(setS);
             }, 300);
           }else{
             $scope.newPics = aux;
-            $scope.updateSlider();
+            var setU = $interval(function() {
+              console.log("rodouUpdade");
+              $scope.updateSlider();
+              $interval.cancel(setU);
+            }, 500);
           }
         });
       };
@@ -119,9 +125,10 @@ angular.module("myApp", [])
         $scope.getMore();
       };
       $scope.updateSlider = function() {
-        var slider = $(".royalSlider").data('royalSlider');
+        var slider = $(".royalSlider").data('royalSlider'),
+            index = slider.numSlides < slider.currSlideId+2 ? slider.numSlides : slider.currSlideId+2;
         $.each($("#hiddenSlider img"),function(k,o){
-          slider.appendSlide(o,slider.currSlideId+3);
+          slider.appendSlide(o,index);
         });
       };
       $scope.setSlider = function() {
@@ -146,7 +153,7 @@ angular.module("myApp", [])
       $scope.getMore();
       interval = $interval(function() {
         $scope.getMore();
-      }, 5000);
+      }, 10000);
       $scope.tags = [
         'Bootstrap', 'AngularJS', 'Instagram', 'Factory'
       ];
