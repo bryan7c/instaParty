@@ -3,44 +3,60 @@
 <head>
   <meta charset="utf-8">
   <title>Superslides - A fullscreen slider for jQuery</title>
-  <link rel="stylesheet" href="stylesheets/superslides.css">
+  <!-- basic stylesheet -->
+  <link rel="stylesheet" href="Materiais de apoio/Royal/royalslider.css">
+
+  <!-- skin stylesheet (change it if you use another) -->
+  <link rel="stylesheet" href="Materiais de apoio/Royal/skins/default/rs-default.css">
   
   <!-- Latest compiled and minified Angular -->
   <script src="lib/angular.min.js"></script>
 </head>
 <body>
+<style type="text/css">
+  .glyphicon-heart{
+    color:#cc0000;
+  }
+</style>
   <div class="container" ng-app="myApp" ng-controller="Example">
+    <div id="slides">
+      <div id="slider-container" class="royalSlider rsDefault" style="width:100%; height:100%">
+          <img class="rsImg" ng-repeat="p in pics" ng-src="{{p.images.low_resolution.url}}" alt="{{p.caption.text}}">
+      </div>
+    </div>
+    <div id="hiddenSlider" style="display:none">
+      <img class="rsImg" ng-repeat="p in newPics" ng-src="{{p.images.low_resolution.url}}" alt="{{p.caption.text}}">
+    </div>
     <div class="container">
       <div class="row">
-        <div class="col-md-12"><h1>Showing popular Instagram pictures <button type="button" class="btn btn-success" ng-click="getMore()">You have {{pics.length}} pictures on page - Click to see more pictures?</button></h1></div>
-      </div>
-        <div class="row">
-		<div ng-repeat="p in pics | orderBy:orderBy" class="col-md-2">
-			<a href="{{p.link}}" target="_blank"><img ng-src="{{p.images.low_resolution.url}}" class="img-responsive thumbnail" title="{{p.caption.text}}"></a>
-<span class="glyphicon glyphicon-heart"> {{p.likes.count}}</span>      
+        <div class="col-md-12">
+          <h1>Showing popular Instagram pictures <button type="button" class="btn btn-success" ng-click="stopInterval()">You have {{pics.length}} pictures on page - Click to see more pictures?</button></h1>
         </div>
-    </div>
-</div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <button type="button" class="btn btn-success" ng-click="setSlider()">You set slider</button>
+        </div>
+      </div>
 
+      <div class="row">
+        <div class="col-md-12">
+          <button type="button" class="btn btn-success" ng-click="moreFoto()">mais</button>
+        </div>
+      </div>
+    </div>
+  </div>
   <script src="lib/jquery-1.11.2.min.js"></script>
   <script src="javascripts/instafetch.js"></script>
   <link rel="stylesheet" href="lib/bootstrap-3.3.4-dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="lib/bootstrap-3.3.4-dist/css/bootstrap-theme.min.css">
   <script src="lib/bootstrap-3.3.4-dist/js/bootstrap.min.js"></script>
 
-  <script src="javascripts/jquery.easing.1.3.js"></script>
-  <script src="javascripts/jquery.animate-enhanced.min.js"></script>
-  <script src="javascripts/jquery.superslides.js" type="text/javascript" charset="utf-8"></script>
-  <script src="javascripts/instaController.js"></script>
+  <!-- Create it with slider online build tool for better performance. -->
+  <script src="Materiais de apoio/Royal/jquery.royalslider.min.js"></script>
 
-  <script type="text/javascript">
-
-  </script>
 </body>
 </html>
-
-
-
 <script type="text/javascript">
 angular.module("myApp", [])
     .filter('fromTo', function() {
@@ -57,10 +73,10 @@ angular.module("myApp", [])
         function($http) {
             return {
                 fetchPopular: function(callback) {
+                    console.log(callback,"param");
+                    var endPoint = "https://api.instagram.com/v1/media/popular?client_id=dd82511e75ac420e823d8ebc9ff7a873&callback=JSON_CALLBACK&count=2";
 
-                    //var endPoint = "https://api.instagram.com/v1/media/popular?client_id=642176ece1e7445e99244cec26f4de1f&callback=JSON_CALLBACK";
-
-                    var endPoint = "https://api.instagram.com/v1/tags/curveGood/media/recent/?client_id=642176ece1e7445e99244cec26f4de1f&callback=JSON_CALLBACK";
+                    //var endPoint = "https://api.instagram.com/v1/tags/embraer/media/recent/?client_id=dd82511e75ac420e823d8ebc9ff7a873&callback=JSON_CALLBACK";
                     
                     $http.jsonp(endPoint).success(function(response) {
                         callback(response.data);
@@ -73,21 +89,74 @@ angular.module("myApp", [])
       $scope.pics = [];
       $scope.have = [];
       $scope.orderBy = "-likes.count";
+
+      var interval;
       $scope.getMore = function() {
         instagram.fetchPopular(function(data) {
-            for(var i=0; i<data.length; i++) {
-              if (typeof $scope.have[data[i].id]==="undefined") {
-                $scope.pics.push(data[i]) ;
-                $scope.have[data[i].id] = "1";
-              }
+          var aux = [];
+          $scope.newPics = [];
+          for(var i=0; i<data.length; i++) {
+            if (typeof $scope.have[data[i].id]==="undefined") {
+              aux.push(data[i]);
+              $scope.pics.push(data[i]);
+              $scope.have[data[i].id] = "1";
             }
+          }
+          if($(".royalSlider").data('royalSlider') == undefined){
+            var setS = $interval(function() {
+              console.log("rodou");
+              $scope.setSlider();
+              $interval.cancel(setS);
+            }, 300);
+          }else{
+            $scope.newPics = aux;
+            var setU = $interval(function() {
+              console.log("rodouUpdade");
+              $scope.updateSlider();
+              $interval.cancel(setU);
+            }, 500);
+          }
+        });
+      };
+      $scope.stopInterval = function() {
+        $interval.cancel(interval);
+      };
+      $scope.moreFoto = function() {
+        $scope.getMore();
+      };
+      $scope.updateSlider = function() {
+        var slider = $(".royalSlider").data('royalSlider'),
+            index = slider.numSlides < slider.currSlideId+2 ? slider.numSlides : slider.currSlideId+2;
+        $.each($("#hiddenSlider img"),function(k,o){
+          slider.appendSlide(o,index);
+        });
+      };
+      $scope.setSlider = function() {
+        $(".royalSlider").royalSlider({
+          // general options go gere
+          autoScaleSlider: true,
+          fullscreen: {
+            // fullscreen options go gere
+            enabled: true,
+            nativeFS: true
+          },
+          autoPlay: {
+            // autoplay options go gere
+            enabled: true,
+            pauseOnHover: false,
+            delay: 3000
+          },
+          imageScaleMode: "fit",
+          loop:true
         });
       };
       $scope.getMore();
-      
-        $scope.tags = [
-            'Bootstrap', 'AngularJS', 'Instagram', 'Factory'
-        ]
+      interval = $interval(function() {
+        $scope.getMore();
+      }, 10000);
+      $scope.tags = [
+        'Bootstrap', 'AngularJS', 'Instagram', 'Factory'
+      ];
     });
 </script>
 <!-- UNDER CONSTRUNCTION END -->

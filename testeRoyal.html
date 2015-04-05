@@ -1,0 +1,76 @@
+<html>
+<head>
+	<title>
+teste
+	</title>
+<!-- basic stylesheet -->
+<link rel="stylesheet" href="Materiais de apoio/Royal/royalslider.css">
+
+<!-- skin stylesheet (change it if you use another) -->
+<link rel="stylesheet" href="Materiais de apoio/Royal/skins/default/rs-default.css"> 
+
+<!-- Plugin requires jQuery 1.8+  -->
+<!-- If you already have jQuery on your page, you shouldn't include it second time. -->
+<script src='lib/jquery-1.11.2.min.js'></script>
+
+<!-- Main slider JS script file --> 
+<!-- Create it with slider online build tool for better performance. -->
+<script src="Materiais de apoio/Royal/jquery.royalslider.min.js"></script>
+</head>
+<body>
+<div class="royalSlider rsDefault" style="width:100%; height:100%">
+    <!-- simple image slide -->
+    <img class="rsImg"  data-rsBigImg="https://scontent.cdninstagram.com/hphotos-xaf1/t51.2885-15/s306x306/e15/11111437_1028575620503361_104414070_n.jpg" src="https://scontent.cdninstagram.com/hphotos-xaf1/t51.2885-15/s306x306/e15/11111437_1028575620503361_104414070_n.jpg" alt="image desc" />
+
+    <!-- lazy loaded image slide -->
+    <a class="rsImg" href="https://scontent.cdninstagram.com/hphotos-xfa1/t51.2885-15/s306x306/e15/11111342_1413490145632562_117209456_n.jpg">image desc</a>
+
+    <!-- HTML content slide -->
+    <p>Content goes here</p>
+
+    <!-- image and content -->
+    <div>
+        <img class="rsImg" src="https://scontent.cdninstagram.com/hphotos-xaf1/t51.2885-15/s306x306/e15/11111361_970491972970620_1664593854_n.jpg" />
+        <figure class="rsCaption">This caption <b>HTML</b> text will be used.</figure>
+    </div>
+
+    <!-- HTML content -->
+    <div>
+        Put any HTML content here
+    </div>
+
+    <!-- HTML content (100% with and height) -->
+    <div class="rsContent">
+        Put any HTML content here
+    </div>
+</div>
+<script>
+jQuery(document).ready(function($) {
+
+    $(".royalSlider").royalSlider({
+    	// general options go gere
+    	autoScaleSlider: true,
+    	fullscreen: {
+    		// fullscreen options go gere
+    		enabled: true,
+    		nativeFS: true
+    	},
+    	autoPlay: {
+    		// autoplay options go gere
+    		enabled: true,
+    		pauseOnHover: false
+    	},
+    	autoScaleSlider: true,
+    	imageScaleMode: "fill",
+    	loop:true
+    });
+    setTimeout(function(){
+    	console.log($(".royalSlider img"));
+    	var slider = $(".royalSlider").data('royalSlider');
+    	slider.appendSlide('<a class="rsImg" href="https://scontent.cdninstagram.com/hphotos-xfa1/t51.2885-15/s306x306/e15/11111342_1413490145632562_117209456_n.jpg">image desc</a>',4);
+    },1000);
+
+});
+</script>
+</body>
+</html>
